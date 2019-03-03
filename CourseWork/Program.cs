@@ -60,7 +60,7 @@ namespace CourseWork
 
             void ReceiptRequirements()
             {
-                Console.WriteLine("Поступление требования);
+                Console.WriteLine("Поступление требования");
                 Demand d = new Demand(ArrivalTime, ServiceStartTime, ServiceCompletionTime);
                 if (demands.Count() == 0)
                     ServiceStartTime = minTime;
