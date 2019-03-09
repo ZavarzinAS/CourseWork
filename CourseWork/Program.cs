@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,82 +12,87 @@ namespace CourseWork
     {
         static void Main(string[] args)
         {
+            double mu = 1;
             double lambda = 0.5;
-            Random R = new Random();
+            Random random = new Random();
+
+            double averageResponseTime = 0;
+            int countOfDemands = 0;
 
             Queue<Demand> demands = new Queue<Demand>();
-            double Time = 0;
-            double ArrivalTime = -(1 / lambda) * Math.Log(R.NextDouble());
-            double ServiceStartTime = 0;
-            double ServiceCompletionTime = 0;
-            double minTime;
+            double currentTime = 0;
+            double ArrivalTime = -(1 / lambda) * Math.Log(random.NextDouble());
+            double ServiceStartTime = Double.PositiveInfinity;
+            double ServiceCompletionTime = Double.PositiveInfinity;
+            double minTime = 0;
 
             Console.WriteLine("Ввод времени работы обслуживающего устройства: ");
             double MaxTime = Double.Parse(Console.ReadLine());
 
-            while (Time < MaxTime)
+            while (currentTime < MaxTime)
             {
-
-                if (ArrivalTime < ServiceStartTime && ArrivalTime < ServiceCompletionTime)
-                {
-                    minTime = ArrivalTime;
-                }
-                else
-                {
-                    if (ServiceStartTime < ServiceCompletionTime)
-                    {
-                        minTime = ServiceStartTime;
-                    }
-                    else
-                        minTime = ServiceCompletionTime;
-                }
+                minTime = Math.Min(Math.Min(ArrivalTime, ServiceStartTime), ServiceCompletionTime);
 
                 if (minTime == ArrivalTime)
                 {
                     ReceiptRequirements();
+                    continue;
                 }
 
                 if (minTime == ServiceStartTime)
                 {
                     ServiceStart();
+                    continue;
                 }
 
                 if (minTime == ServiceCompletionTime)
                 {
                     CareRequiremenrts();
+                    continue;
                 }
 
             }
+
+            averageResponseTime /= countOfDemands;
+            Console.WriteLine("Average response time = {0:f4}", averageResponseTime);
+
+
+
 
             void ReceiptRequirements()
             {
                 Console.WriteLine("Поступление требования");
                 Demand d = new Demand(ArrivalTime, ServiceStartTime, ServiceCompletionTime);
                 if (demands.Count() == 0)
+                {
                     ServiceStartTime = minTime;
+                }
                 demands.Enqueue(d);
-                ArrivalTime = ArrivalTime + (-(1 / lambda) * Math.Log(R.NextDouble()));
+                ArrivalTime = ArrivalTime + (-(1 / lambda) * Math.Log(random.NextDouble()));
             }
 
             void ServiceStart()
             {
                 Console.WriteLine("Начало обслуживания");
-                double ServiceTime = ?; //?
+                double ServiceTime = (-(1 / mu) * Math.Log(random.NextDouble())); 
                 ServiceCompletionTime = ServiceTime + minTime;
-                demands.Peek.ServiceStartTime = minTime; //?
-                ServiceStartTime = double.MaxValue;
+                demands.Peek().ServiceStartTime = minTime; 
+                ServiceStartTime = Double.PositiveInfinity;
             }
 
             void CareRequiremenrts()
             {
                 Console.WriteLine("Уход требования");
-                Demand d = demands.Take<>; //?
+                Demand d = demands.Dequeue(); 
                 d.ServiceCompletionTime = minTime;
                 if (demands.Count() > 0)
                 {
                     ServiceStartTime = minTime;
                 }
-                ServiceCompletionTime = double.MaxValue;
+                ServiceCompletionTime = Double.PositiveInfinity;
+
+                averageResponseTime += currentTime - d.ArrivingTime;
+                countOfDemands++;
             }
         }
     }
