@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CourseWork
+namespace CourseWorkLibrary
 {
     public class Demand
     {
@@ -12,17 +12,20 @@ namespace CourseWork
         public double ServiceStartTime { get; set; }
         public double ServiceCompletionTime { get; set; }
 
+        public Demand()
+        {
+        }
+
+        public Demand(double ArrivingTime)
+        {
+            this.ArrivingTime = ArrivingTime;
+        }
 
         public Demand(double ArrivingTime, double ServiceStartTime, double ServiceCompletionTime)
         {
             this.ArrivingTime = ArrivingTime;
             this.ServiceStartTime = ServiceStartTime;
             this.ServiceCompletionTime = ServiceCompletionTime;
-        }
-
-        public double ResponseTime()
-        {
-            return ServiceCompletionTime - ArrivingTime;
         }
     }
 }
